@@ -15,4 +15,5 @@ jobs:
        command: npm install 
     - run:
        name: Start app
-       command: npm start 
+       command: npm run test 
+      
