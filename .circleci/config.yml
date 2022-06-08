@@ -8,6 +8,11 @@ jobs:
  test:
   docker: 
    - image: cimg/node:18.3.0
-    steps:
-      - checkout
-      - run: node --version
+  steps:
+    - checkout
+    - run: 
+       name: Install dependencies
+       command: npm install 
+    - run:
+       name: Start app
+       command: npm start 
