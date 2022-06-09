@@ -10,7 +10,7 @@ commands:
 jobs:
   build:
     docker:
-      - image: cimg/base:2021.11
+      - image: cimg/node:18.3.0
         auth:
           username: annuore
           password: $DOCKERHUB_PASSWORD  # context / project UI env-var reference
