@@ -78,24 +78,74 @@
 #             - Hold-for-Approval
 
 ########### Adding Environmental Variables ##########
+# version: 2.1
+
+# workflows:
+#   test-env-vars:
+#     jobs:
+#       - build
+
+# jobs:
+#   build:
+#     docker:
+#       - image: cimg/base:2021.11
+#         auth:
+#           username: annuore
+#           password: $DOCKERHUB_PASSWORD  # context / project UI env-var reference
+#     steps:
+#       - checkout
+#       - run:
+#           name: "echo an env var that is part of our project"
+#           command: |
+#             echo $MY_ENV_VAR # this env var must be set within the project
+
+
 version: 2.1
 
-workflows:
-  test-env-vars:
-    jobs:
-      - build
+executors:
+  my-executor:
+    docker:
+      - image: buildpack-deps:jessie
+        auth:
+          username: mydockerhub-user
+          password: $DOCKERHUB_PASSWORD  # context / project UI env-var reference
+    working_directory: /tmp
 
 jobs:
-  build:
-    docker:
-      - image: cimg/base:2021.11
-        auth:
-          username: annuore
-          password: $DOCKERHUB_PASSWORD  # context / project UI env-var reference
+  flow:
+    executor: my-executor
     steps:
-      - checkout
-      - run:
-          name: "echo an env var that is part of our project"
-          command: |
-            echo $MY_ENV_VAR # this env var must be set within the project
+      - run: mkdir -p workspace
+      - run: echo "Hello, world!" > workspace/echo-output
+
+      # Persist the specified paths (workspace/echo-output) into the workspace for use in downstream job.
+      - persist_to_workspace:
+          # Must be an absolute path, or relative path from working_directory. This is a directory on the container which is
+          # taken to be the root directory of the workspace.
+          root: workspace
+          # Must be relative path from root
+          paths:
+            - echo-output
+
+  downstream:
+    executor: my-executor
+    steps:
+      - attach_workspace:
+          # Must be absolute path or relative path from working_directory
+          at: /tmp/workspace
+
+      - run: |
+          if [[ `cat /tmp/workspace/echo-output` == "Hello, world!" ]]; then
+            echo "It worked!";
+          else
+            echo "Nope!"; exit 1
+          fi
+
+workflows:
+  btd:
+    jobs:
+      - flow
+      - downstream:
+          requires:
+            - flow
 
