@@ -18,61 +18,84 @@
 #        command: npm run test 
 
 
+# version: 2.1
+# jobs:
+#   # running commands on a basic image
+#   Hello-World:
+#     docker:
+#       - image: cimg/base:2021.04
+#     steps:
+#       - run:
+#           name: Saying Hello
+#           command: |
+#             echo 'Hello World!'
+#             echo 'This is the delivery pipeline'
+#   # fetching code from the repo
+#   Fetch-Code:
+#     docker:
+#       - image: cimg/base:2021.04
+#     steps:
+#       - checkout
+#       - run:
+#           name: Getting the Code
+#           command: |
+#             ls -al
+#             echo '^^^Your repo files^^^'
+#   # running a node container
+#   Using-Node:
+#     docker:
+#       - image: cimg/node:17.2
+#     steps:
+#       - run:
+#           name: Running the Node Container
+#           command: |
+#             node -v
+#   Now-Complete:
+#     docker:
+#       - image: alpine:3.15
+#     steps:
+#       - run:
+#           name: Approval Complete
+#           command: |
+#             echo 'The work is now complete.'
+# workflows:
+#   Example-Workflow:
+#     jobs:
+#       - Hello-World
+#       - Fetch-Code:
+#           requires:
+#             - Hello-World
+#       - Using-Node:
+#           requires:
+#             - Fetch-Code
+#       - Hold-for-Approval:
+#           type: approval
+#           requires:
+#             - Using-Node
+#             - Fetch-Code
+#       - Now-Complete:
+#           requires:
+#             - Hold-for-Approval
+
+########### Adding Environmental Variables ##########
 version: 2.1
+
+workflows:
+  test-env-vars:
+    jobs:
+      - build
+
 jobs:
-  # running commands on a basic image
-  Hello-World:
+  build:
     docker:
-      - image: cimg/base:2021.04
-    steps:
-      - run:
-          name: Saying Hello
-          command: |
-            echo 'Hello World!'
-            echo 'This is the delivery pipeline'
-  # fetching code from the repo
-  Fetch-Code:
-    docker:
-      - image: cimg/base:2021.04
+      - image: cimg/base:2021.11
+        auth:
+          username: mydockerhub-user
+          password: $DOCKERHUB_PASSWORD  # context / project UI env-var reference
     steps:
       - checkout
       - run:
-          name: Getting the Code
+          name: "echo an env var that is part of our project"
           command: |
-            ls -al
-            echo '^^^Your repo files^^^'
-  # running a node container
-  Using-Node:
-    docker:
-      - image: cimg/node:17.2
-    steps:
-      - run:
-          name: Running the Node Container
-          command: |
-            node -v
-  Now-Complete:
-    docker:
-      - image: alpine:3.15
-    steps:
-      - run:
-          name: Approval Complete
-          command: |
-            echo 'The work is now complete.'
-workflows:
-  Example-Workflow:
-    jobs:
-      - Hello-World
-      - Fetch-Code:
-          requires:
-            - Hello-World
-      - Using-Node:
-          requires:
-            - Fetch-Code
-      - Hold-for-Approval:
-          type: approval
-          requires:
-            - Using-Node
-            - Fetch-Code
-      - Now-Complete:
-          requires:
-            - Hold-for-Approval
+            echo $MY_ENV_VAR # this env var must be set within the project
+
