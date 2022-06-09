@@ -5,7 +5,7 @@ commands:
     description: "Prints the Circle CI Workflow ID from its environment variable to the console"
     steps: 
     - run:
-         echo $CIRCLE_WORKFLOW_I 
+         echo $CIRCLE_WORKFLOW_ID.llsdjbvkwn 
 
 jobs:
   build:
@@ -20,4 +20,3 @@ jobs:
       - run: 
           command: echo "Oops! Failed! Heeeeelllllpppp!!!!"
           when: on_fail
-          
