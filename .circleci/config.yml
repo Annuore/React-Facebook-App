@@ -5,7 +5,7 @@ commands:
     description: "Prints the Circle CI Workflow ID from its environment variable to the console"
     steps: 
     - run:
-         echo $CIRCLE_WORKFLOW_ID.llsdjbvkwn 
+         echo $RUBBISH
 
 jobs:
   build:
