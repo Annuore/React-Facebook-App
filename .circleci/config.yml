@@ -5,15 +5,19 @@ commands:
     description: "Prints the Circle CI Workflow ID from its environment variable to the console"
     steps: 
     - run:
-         echo $CIRCLE_WORKFLOW_ID 
+         echo $CIRCLE_WORKFLOW_I 
 
 jobs:
   build:
     docker:
       - image: cimg/node:18.3.0
-        auth:
-          username: annuore
-          password: $DOCKERHUB_PASSWORD  # context / project UI env-var reference
+        # auth:
+        #   username: annuore
+        #   password: $DOCKERHUB_PASSWORD  # context / project UI env-var reference
     steps:
       - checkout
       - print_pipeline_id
+      - run: 
+          command: echo "Oops! Failed! Heeeeelllllpppp!!!!"
+          when: on_fail
+          
