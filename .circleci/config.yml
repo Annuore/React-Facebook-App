@@ -4,7 +4,7 @@ commands:
   print_pipeline_id:
     description: "Prints the Circle CI Workflow ID from its environment variable to the console"
     steps: 
-    - run:
+    - ru:
          echo $RUBBISH
 
 jobs:
